@@ -45,13 +45,13 @@ int main(void)
   socklen_t ca_len;
 
   if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-    perror("socket");
+    fprintf(stderr, "error: socket\n");
     exit(1);
   }
 
   soval = 1;
   if (setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &soval, sizeof(soval)) == -1) {
-    perror("setsockopt");
+    fprintf(stderr, "error: setsockopt\n");
     exit(1);
   }
 
@@ -60,12 +60,12 @@ int main(void)
   sa.sin_port = htons(SERVER_PORT);
   sa.sin_addr.s_addr = htonl(INADDR_ANY);
   if (bind(s, (struct sockaddr *)&sa, sizeof(sa)) == -1) {
-    perror("bind");
+    fprintf(stderr, "error: bind\n");
     exit(1);
   }
 
   if (listen(s, NQUEUESIZE)) {
-    perror("listen");
+    fprintf(stderr, "error: listen\n");
     exit(1);
   }
 
@@ -76,25 +76,25 @@ int main(void)
 
     ca_len = sizeof(ca);
     if ((ws = accept(s, (struct sockaddr *)&ca, &ca_len)) == -1) {
-      perror("accept");
+      fprintf(stderr, "error: accept\n");
       exit(1);
     }
     fprintf(stderr, "Connection established.\n");
 
     fprintf(stderr, "Sending the message...\n");
     if ((cc = write(ws, message, strlen(message))) == -1) {
-      perror("write");
+      fprintf(stderr, "error: write\n");
       exit(1);
     }
     fprintf(stderr, "Message sent.\n");
 
     if (shutdown(ws, SHUT_RDWR) == -1) {
-      perror("shutdown");
+      fprintf(stderr, "error: shutdown\n");
       exit(1);
     }
 
     if (close(ws) == -1) {
-      perror("close");
+      fprintf(stderr, "error: close\n");
       exit(1);
     }
   }
